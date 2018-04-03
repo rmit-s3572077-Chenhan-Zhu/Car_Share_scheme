@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Car rental
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{url_for('static',filename='css/car_rental.css')}}">
+
+{% endblock %}
+
+{% block main %}
+    <h3 class="page-title">Release car</h3>
+<form action="" method ="POST">
+         <div class="form-container">
+              <div class="form-group">
+                  <input type="text" class="form-control" placeholder="please enter book type" name="title">
+              </div>
+              <div class="form-group">
+                     <textarea name="content" placeholder="explain" rows ="10" class="form-control"></textarea>
+              </div>
+               <div class="form-group">
+                   <button class="btn btn-primary">submit</button>
+              </div>
+        </div>
+    </form>
+{% endblock %}
