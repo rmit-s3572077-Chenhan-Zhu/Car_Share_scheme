@@ -44,19 +44,19 @@
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
         <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
-          <a href="{{ url_for('users') }}" class="nav-link" href="index.html">
+          <a href="{{ url_for('get_users', username=username) }}" class="nav-link" href="index.html">
             <i class="fa fa-fw fa-dashboard"></i>
             <span class="nav-link-text">Dashboard</span>
           </a>
         </li>
         <li href="{{ url_for('index') }}" class="nav-item" data-toggle="tooltip" data-placement="right" title="Charts">
-          <a class="nav-link" href="charts.html">
+          <a class="nav-link" href="{{ url_for('tables') }}">
             <i class="fa fa-fw fa-area-chart"></i>
             <span class="nav-link-text">Charts</span>
           </a>
         </li>
         <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Tables">
-          <a class="nav-link" href="tables.html">
+          <a class="nav-link" href="{{ url_for('tables') }}">
             <i class="fa fa-fw fa-table"></i>
             <span class="nav-link-text">Booking History</span>
           </a>
@@ -252,51 +252,30 @@
         <div class="card-body">
           <div class="table-responsive">
 
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-              <thead>
+              <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Location</th>
-                  <th>Booking time</th>
-                  <th>Return time</th>
-                  <th>Car Type</th>
-                  <th>GearBox</th>
-                    <th>Create Time</th>
-
+                    <th>ID</th>
+                    <th>Car Name</th>
+                    <th>Booking time</th>
+                    <th>Return time</th>
+                    <th>Creating Time</th>
                 </tr>
-              </thead>
-              <tfoot>
-                <tr>
-                 <th>ID</th>
-                  <th>Location</th>
-                  <th>Booking time</th>
-                  <th>Return time</th>
-                  <th>Car Type</th>
-                  <th>GearBox</th>
-                    <th>Create Time</th>
+                </thead>
+                <tbody>
+                {% for car in Cars %}
+                    <tr>
+                        <td>{{ car.id }}</td>
+                        <td>{{ car.carname }}</td>
+                        <td>{{ car.Btime }}-{{ car.Bday }}-{{ car.Bdatetime }}</td>
+                        <td>{{ car.Rtime }}-{{ car.Rday }}-{{ car.Rdatetime }}</td>
+                        <td>{{ car.create_time }}</td>
+                    </tr>
 
-                </tr>
-              </tfoot>
-                 {% for car in Cars %}
-              <tbody>
-
-
-
-                <tr>
-                  <td>{{ car.id }}</td>
-                  <td>{{ car.location }}</td>
-                  <td>{{ car.Bdatetime }}.{{ car.Bday }}.{{ car.Btime }}</td>
-                  <td>{{ car.Rdatetime }}.{{ car.Rday }}.{{ car.Rtime }}</td>
-                  <td>{{ car.cattype }}</td>
-                  <td>{{ car.gearbox }}</td>
-                    <td>{{ car.create_time }}</td>
-
-                </tr>
-
-
-              </tbody>
                 {% endfor %}
-            </table>
+                </tbody>
+        </table>
+
           </div>
         </div>
         <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>

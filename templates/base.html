@@ -8,16 +8,13 @@
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"
           integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
-    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
 
-    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"
-            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-            crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="{{ url_for('static',filename = 'css/base.css') }}">
 </head>
 <body>
-<nav class="navbar navbar-inverse">
+
+<nav class="nav navbar-inverse" style="clear:both;">
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -30,7 +27,7 @@
             </button>
             <a class="navbar-brand" href="/">
 {#                <img class="logo" src="{{ url_for('static',filename='images/carlogo.jpg') }}" alt="">#}
- <img alt="Brand" src="{{ url_for('static',filename='images/logo1.png') }}" width="50" height="30">
+ <img alt="Brand" style="position:relative;top:-15px" src="{{ url_for('static',filename='images/logo-vettoriale-negativo.jpg') }}" width="130" height="50">
             </a>
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -38,7 +35,7 @@
             <ul class="nav navbar-nav">
                 <li class="active">
                     <a href="/">Main<span class="sr-only">(current)</span></a></li>
-                <li><a href="{{ url_for('car_rental') }}">Rent Car</a></li>
+                <li><a href="{{ url_for('faq') }}">FAQ</a></li>
 
                 <li><a href="{{ url_for('booking') }}">Booking Now</a></li>
                 <li><a href="{{ url_for('ContactUs') }}">Contact Us</a></li>
@@ -54,7 +51,7 @@
 
                 {% if user %}
 
-                    <li><a href="{{ url_for('users') }}">User：{{ user }}</a></li>
+                    <li><a href="{{ url_for('get_users', username=username) }}">User：{{ username }}</a></li>
                     <li><a href="{{ url_for('logout') }}">Log Out</a></li>
                 {% else %}
 
@@ -68,9 +65,15 @@
     </div><!-- /.container-fluid -->
 </nav>
 
-<dir class="main">
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+
+<div class="main">
     {% block main %}{% endblock %}
-</dir>
+</div>
 
 </body>
 </html>

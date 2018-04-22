@@ -36,11 +36,17 @@
 
 {% block main %}
 
+ <div class="font" style="position: absolute">
+ <h2>
+     WIN Rental
+ </h2>
+ </div>
 
 
 
-    <div class="w3-content w3-display-container" style="max-width:800px">
-        <img class="mySlides" src="{{ url_for('static',filename = 'images/banner004.jpg') }}">
+<div class="haha">
+    <div class="w3-content w3-display-container" style="max-width:950px;position:absolute; top:50px;left:250px;">
+        <div><img class="mySlides" src="{{ url_for('static',filename = 'images/430211646158910.jpg') }}"></div>
         <img class="mySlides" src="{{ url_for('static',filename = 'images/faroe-islands_make-travel_road-trip_1.jpg') }}">
         <img class="mySlides" src="{{ url_for('static',filename = 'images/2.jpg') }}">
 
@@ -54,6 +60,7 @@
             <span class="w3-badge demo w3-border w3-transparent w3-hover-white" onclick="currentDiv(3)"></span>
         </div>
     </div>
+</div>
 
     <script>
         var slideIndex = 1;
