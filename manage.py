@@ -4,7 +4,7 @@ from flask_script import Manager
 from flask_migrate import Migrate,MigrateCommand
 from zhiliao import app
 from exits import db
-from modules import User,Car_rental,Cars
+from modules import User,Car_rental,CarsDataset,Cars
 
 manager = Manager(app)
 

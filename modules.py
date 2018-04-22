@@ -26,17 +26,17 @@ class Car_rental(db.Model):
 class Cars(db.Model):
     __tablename__ = 'Cars'
     id = db.Column(db.Integer, primary_key=True,autoincrement=True)
-    location=db.Column(db.String(100),nullable=False)
-    Bdatetime=db.Column(db.Text,nullable=False)
-    Bday = db.Column(db.Text, nullable=False)
-    Btime = db.Column(db.Text, nullable=False)
-    Rdatetime = db.Column(db.Text, nullable=False)
-    Rday = db.Column(db.Text, nullable=False)
-    Rtime = db.Column(db.Text, nullable=False)
+    carname=db.Column(db.Text,nullable=True)
+    Bdatetime=db.Column(db.Text,nullable=True)
+    Bday = db.Column(db.Text, nullable=True)
+    Btime = db.Column(db.Text, nullable=True)
+    Rdatetime = db.Column(db.Text, nullable=True)
+    Rday = db.Column(db.Text, nullable=True)
+    Rtime = db.Column(db.Text, nullable=True)
 
     create_time = db.Column(db.DateTime,default=datetime.now)
-    cattype=db.Column(db.String(100),nullable=False)
-    gearbox=db.Column(db.String(100),nullable=False)
+    cattype=db.Column(db.String(100),nullable=True)
+    gearbox=db.Column(db.String(100),nullable=True)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     author = db.relationship('User', backref=db.backref('Cars'))
@@ -46,19 +46,43 @@ class Cars(db.Model):
 class CarsDataset(db.Model):
     __tablename__ = 'CarsDataset'
 
-    name=db.Column(db.Text,nullable=False)
-    price=db.Column(db.Integer,nullable=False)
-    vehicleType = db.Column(db.Text, nullable=False)
-    yearOfRegistration = db.Column(db.Integer, nullable=False)
-    gearbox = db.Column(db.Text, nullable=False)
-    kilometer = db.Column(db.Integer, nullable=False)
-    brand= db.Column(db.Text, nullable=False)
-    lng=db.Column(db.Float,nullable=False)
-    lat=db.Column(db.Float,nullable=False)
+    name=db.Column(db.Text,nullable=True)
+    price=db.Column(db.Integer,nullable=True)
+    vehicleType = db.Column(db.Text, nullable=True)
+    yearOfRegistration = db.Column(db.Integer, nullable=True)
+    gearbox = db.Column(db.Text, nullable=True)
+    kilometer = db.Column(db.Integer, nullable=True)
+    brand= db.Column(db.Text, nullable=True)
+    lng=db.Column(db.FLOAT,nullable=True)
+    lat=db.Column(db.FLOAT,nullable=True)
+    seat = db.Column(db.Integer, nullable=True)
+    bluetooth = db.Column(db.Text, nullable=True)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     id = db.Column(db.Integer, primary_key=True,autoincrement=True)
+    # create_time = db.Column(db.DateTime,default=datetime.now)
 
     author = db.relationship('User', backref=db.backref('CarsDataset'))
+
+    def serializer(self):
+        """
+        序列化
+        :return: dict
+        """
+        json = {
+            'lng': self.lng,
+            'lat': self.lat,
+            'name': self.name,
+            'price': self.price,
+            'vehicleType': self.vehicleType,
+            'brand': self.brand,
+            'yearOfRegistration': self.yearOfRegistration,
+            'seat': self.seat,
+            'bluetooth': self.bluetooth,
+
+
+        }
+        return json
+
 
 
 
