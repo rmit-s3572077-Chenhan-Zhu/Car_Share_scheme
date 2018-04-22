@@ -1,0 +1,122 @@
+.background{
+    position: relative;
+    margin-left:-50px;
+
+}
+.smallcar{
+
+     position: absolute;
+    left: 50px;
+    bottom: 510px;
+
+}
+
+.font{
+    font-size:12px;
+     position: absolute;
+    left: 50px;
+    bottom: 67px;
+    /*font-weight: bold;*/
+
+}
+.font2 {
+    font-size: 12px;
+    position: absolute;
+    left: 380px;
+    bottom: 90px;
+    /*font-weight: bold;*/
+}
+.carph{
+   position: absolute;
+    left: 230px;
+    bottom: 210px;
+
+}
+
+.button{
+    font-size:12px;
+    position: absolute;
+    left: 370px;
+    bottom: 20px;
+    /*font-weight: bold;*/
+
+
+}
+
+.title{
+    font-size:15px;
+    font-weight: bold;
+     position: absolute;
+    left: 70px;
+    bottom: 280px;
+    color: #f1c40f;
+
+}
+.choose{
+    font-style:italic;
+    position: absolute;
+    left: 430px;
+    bottom: 250px;
+     color: #0a68b4;
+}
+
+.time{
+     font-size:15px;
+    position: absolute;
+    left: 320px;
+    bottom: 190px;
+}
+
+.timu {
+    font-style: oblique;
+    font-size: 25px;
+    font-weight: bold;
+    position: absolute;
+    right: 300px;
+    bottom: 330px;
+    color: #0a68b4;
+}
+
+.shuoming1{
+ font-size:15px;
+    position: absolute;
+    right: 140px;
+    bottom: 260px;
+    width: 450px;
+
+}
+.shuoming2{
+ font-size:15px;
+    position: absolute;
+    right: 140px;
+    bottom: 220px;
+    width: 450px;
+
+
+}.shuoming3{
+ font-size:15px;
+    position: absolute;
+    right: 140px;
+    bottom: 160px;
+    width: 450px;
+
+}
+
+ .shuoming4{
+ font-size:15px;
+    position: absolute;
+    right: 140px;
+    bottom: 80px;
+    width: 450px;
+
+}
+
+ .shuoming5{
+ font-size:15px;
+    position: absolute;
+    right: 140px;
+    bottom: -20px;
+    width: 450px;
+
+}
+
