@@ -1,17 +1,17 @@
 # encoding: utf-8
-from flask import Flask, render_template, request, redirect, url_for, session, flash, Blueprint
+from flask import Flask, render_template, request, redirect, url_for, session, flash, Blueprint, jsonify,abort
 import config
 import requests
-from modules import User, Car_rental, Cars, CarsDataset
+from modules import User, Car_rental, CarsDataset,Cars
 from exits import db
 import os
 from decoratars import login_required
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map
 from flask_admin import Admin, BaseView, expose
-from flask_paginate import Pagination, get_page_parameter
-from math import *
+# from flask_login import LoginManager,UserMixin
 
+from math import *
 
 ip = '128.250.51.47'
 url = 'http://freegeoip.net/json/' + ip
@@ -39,14 +39,19 @@ db.init_app(app)
 app.secret_key = os.urandom(24)
 GoogleMaps(app)
 
+
 flask_admin = Admin()
 flask_admin.init_app(app)
 EARTH_REDIUS = 6378.137
 
 
 @app.route('/')
+@login_required
 def index():
-    return render_template('index.html')
+
+    username = session['username']
+
+    return render_template('index.html', username=username)
 
 
 @app.route('/login/', methods=['GET', 'POST'])
@@ -54,14 +59,18 @@ def login():
     if request.method == 'GET':
         return render_template('login.html')
     else:
+        if request.form.get('register'):
+            return render_template('register.html')
+
         username = request.form.get('username')
         password = request.form.get('password')
+        # authorid=request.form('')
         user = User.query.filter(User.username == username, User.password == password).first()
         if user:
             session['user_id'] = user.id
             session['username'] = user.username
             session.permanent = True
-            return redirect(url_for('index'))
+            return redirect('/')
         else:
             return u'wrong username or password,please try again '
 
@@ -85,20 +94,26 @@ def register():
 
 
 @app.route('/car_rental/', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def car_rental():
     if request.method == 'GET':
         return render_template('car_rental.html')
     else:
-        title = request.form.get('title')
-        content = request.form.get('content')
-        car_rental = Car_rental(title=title, content=content)
-        user_id = session.get('user_id')
-        user = User.query.filter(User.id == user_id).first()
-        car_rental.author = user
-        db.session.add(car_rental)
-        db.session.commit()
-        return redirect(url_for('index'))
+        name = "test"
+        brand = "tet"
+        if 'name' in request.form:
+            name = request.form['name']
+            brand = request.form['brand']
+        return render_template('car_rental.html', name=name, brand=brand)
+        # title = request.form.get('title')
+        # content = request.form.get('content')
+        # car_rental = Car_rental(title=title, content=content)
+        # user_id = session.get('user_id')
+        # user = User.query.filter(User.id == user_id).first()
+        # car_rental.author = user
+        # db.session.add(car_rental)
+        # db.session.commit()
+        # return redirect(url_for('index'))
 
 
 @app.route('/logout/')
@@ -126,32 +141,120 @@ def url_for_other_page(page):
 app.jinja_env.globals['url_for_other_page'] = url_for_other_page
 
 
-@app.route('/users/', methods=['GET', 'POST'])
-# @login_required
-def users():
-    return render_template('users.html')
+@app.route('/users/<username>/')
+@login_required
+def get_users(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        abort(404)
+    return render_template('users.html', user=user)
+
+
 
 
 @app.route('/ContactUs/', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def ContactUs():
-    return render_template('ContactUs.html')
+    username = session['username']
+    return render_template('ContactUs.html',username=username)
 
 
-@app.route('/tables/', methods=['GET', 'POST'])
-# @login_required
-def tables():
-    context = {
-        'Cars': Cars.query.all()
-    }
+@app.route('/faq/', methods=['GET', 'POST'])
+@login_required
+def faq():
+    username = session['username']
+    return render_template('Faq.html',username=username)
 
-    return render_template('tables.html', **context)
+# save car
+@app.route('/booking/savecar',methods=['POST'])
+@login_required
+def bookingsavecar():
+    if request.method == 'POST':
+        # value from post
+        Bdatetime = request.form.get('Bdatetime')
+        Btime = request.form.get('Btime')
+        Bday = request.form.get('Bday')
+        Rdatetime = request.form.get('Rdatetime')
+        Rtime = request.form.get('Rtime')
+        Rday = request.form.get('Rday')
+
+        #name = "test"
+        #brand = "tet"
+        #bluetooth = "teft"
+        #seat = "taet"
+        #vehicleType = "tqet"
+        #if 'name' in request.form:
+        name = request.form['name']
+            # brand = request.form['brand']
+            # seat = request.form['seat']
+            # bluetooth = request.form['bluetooth']
+            # vehicleType = request.form['vehicleType']
+
+        # return 'test'
+
+        carinfo = Cars(Rdatetime=Rdatetime, Bdatetime=Bdatetime, carname=name,
+                       Rday=Rday, Rtime=Rtime, Btime=Btime, Bday=Bday)
+
+        user_id = session.get('user_id')
+        user = User.query.filter(User.id == user_id).first()
+        carinfo.author = user
+        db.session.add(carinfo)
+        db.session.commit()
+        return 'booking success !'
+
+
+# get values from map
+@app.route('/booking/car/', methods=['GET', 'POST'])
+@login_required
+def bookingcar():
+    username = session['username']
+    if request.method == 'GET':
+        # return map
+        return redirect(url_for('booking'))
+        #return render_template('car.html',name='tom')
+    else:
+        #Rdatetime = request.form.get('Rdatetime')
+        #Bdatetime = request.form.get('Bdatetime')
+        #name = request.form['name']
+        #Rday = request.form.get('Rday')
+        #Rtime = request.form.get('Rtime')
+        #Btime = request.form.get('Btime')
+        #Bday = request.form.get('Bday')
+
+        #name = "test"
+        #brand = "tet"
+        #bluetooth = "teft"
+        #seat = "taet"
+        #vehicleType = "tqet"
+        #if 'name' in request.form:
+
+
+        # values from map
+        name = request.form['name']
+        brand = request.form['brand']
+
+        seat = request.form['seat']
+        bluetooth = request.form['bluetooth']
+        vehicleType = request.form['vehicleType']
+
+        #return 'test'
+
+
+        return render_template('car.html', name=name, brand=brand, bluetooth=bluetooth, seat=seat,
+                               vehicleType=vehicleType, username=username)
+
+        #return render_template('car.html',name=name, brand=brand, bluetooth=bluetooth, seat=seat,
+                               #vehicleType=vehicleType,carinfo=carinfo,username=username)
+
+
 
 
 @app.route('/booking/', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def booking():
+    username = session['username']
     page_data = CarsDataset.query
+    # catdatas = CarsDataset.query.all()
     tid = request.args.get("tid", 0)
     if int(tid) != 0:
         if int(tid) == 1:
@@ -167,16 +270,16 @@ def booking():
             page_data = page_data.filter_by(brand='peugeot')
 
         if int(tid) == 5:
-            page_data = page_data.filter_by(brand='mercedes benz')
+            page_data = page_data.filter_by(brand='mercedesBenz')
 
         if int(tid) == 6:
             page_data = page_data.filter_by(brand='ford')
 
     time = request.args.get("time", 0)
     if int(time) == 1:
-        page_data = page_data.filter_by(gearbox='manuell')
+        page_data = page_data.filter_by(gearbox='manual')
     if int(time) == 2:
-        page_data = page_data.filter_by(gearbox='automatik')
+        page_data = page_data.filter_by(gearbox='automatic')
 
     pm = request.args.get("pm", 0)
     p = dict(
@@ -184,78 +287,119 @@ def booking():
         time=time,
         pm=pm
     )
+    locations = [d.serializer() for d in page_data]
+
+    Lat_A = -37.80314407
+    Lng_A = 144.9655776
+    Lat_B = page_data.with_entities(CarsDataset.lat).all()
+    Lng_B = page_data.with_entities(CarsDataset.lng).all()
+    sb = haversine(Lng_A, Lat_A, Lng_B, Lat_B)
+    sb = [s for s in sb]
 
     context = {
         'CarsDataset': CarsDataset.query.all()
     }
 
-    sndmap = Map(
-        identifier="sndmap",
-        lat=-37.8253632,
-        lng=144.9504107,
-        style="height:500px;width:500px;margin:0;",
+    # Lat = page_data.with_entities(CarsDataset.lat).all()
+    # Lng = page_data.with_entities(CarsDataset.lng).all()
+    # for x,y in zip(Lat,Lng):
+    #     sndmap = Map(
+    #         identifier="sndmap",
+    #         lat=-37.8253632,
+    #         lng=144.9504107,
+    #         style="height:500px;width:500px;margin:0;",
+    #         markers=[{
+    #             'lat':x,
+    #             'lng':y,
+    #         }]
+    #      )
 
-        markers=[
-            {
-                'icon': 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
-                'lat': -37.8222763,
-                'lng': 144.9556639,
-                'infobox': "<b>Hello World</b>"
-            },
-            {
-                'icon': 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-                'lat': -37.8079088,
-                'lng': 144.9654394,
-                'infobox': "<b>Hello World from other place</b>"
-            }
-        ]
+    boxcontent = "<form method='post' action='http://127.0.0.1:5000/booking/car/'><div>{0}<input type='hidden' name='name' value='{0}'/></div>"" \
+    ""<div>{1}<input type='hidden' name='brand' value='{1}'/></div> <div><input type='hidden' name='seat' value='{2}'/></div>" \
+    "<div><input type='hidden' name='bluetooth' value='{3}'/></div>" \
+    "<div><input type='hidden' name='vehicleType' value='{4}'/></div><button type='submit'class=btn btn-primary>booking</button></form>"
+
+    carmap = Map(
+        identifier="carmap",
+        style="height:700px;width:800px;margin:0;",
+        zoom="16",
+        language="en",
+        lat=locations[0]['lat'],
+        lng=locations[0]['lng'],
+        name=locations[0]['name'],
+        brand=locations[0]['brand'],
+        seat=locations[0]['seat'],
+        bluetooth=locations[0]['bluetooth'],
+        vehicleType=locations[0]['vehicleType'],
+
+        markers=[{"lat": loc['lat'], "lng": loc['lng'],
+                  "infobox": boxcontent.format(loc['name'].encode('utf-8'), loc['brand'].encode('utf-8'), loc['seat'],
+                                               loc['bluetooth'], loc['vehicleType'])} for loc in locations ]
     )
-    # Lat_A = -37.8253632
-    # Lng_A = 144.9504107
-    Lat_B = page_data.with_entities(CarsDataset.lat).all()
-    Lng_B = page_data.with_entities(CarsDataset.lng).all()
 
-    # sb = Distance1(Lat_A, Lng_A, Lat_B, Lng_B)
 
-    if request.method == 'POST':
-        location = request.form.get('location')
-        Bdatetime = request.form.get('Bdatetime')
-        Btime = request.form.get('Btime')
-        Bday = request.form.get('Bday')
+    # if request.method == 'POST':
+    #     location = request.form.get('location')
+    #     Bdatetime = request.form.get('Bdatetime')
+    #     Btime = request.form.get('Btime')
+    #     Bday = request.form.get('Bday')
+    #
+    #     Rdatetime = request.form.get('Rdatetime')
+    #     Rtime = request.form.get('Rtime')
+    #     Rday = request.form.get('Rday')
+    #
+    #     cattype = request.form.get('type')
+    #     gearbox = request.form.get('gear')
+    #
+    #     car = Cars(location=location, Rdatetime=Rdatetime, Bdatetime=Bdatetime, cattype=cattype, gearbox=gearbox,
+    #                Rday=Rday, Rtime=Rtime, Btime=Btime, Bday=Bday)
+    #     user_id = session.get('user_id')
+    #     user = User.query.filter(User.id == user_id).first()
+    #     car.author = user
+    #     db.session.add(car)
+    #     db.session.commit()
 
-        Rdatetime = request.form.get('Rdatetime')
-        Rtime = request.form.get('Rtime')
-        Rday = request.form.get('Rday')
+    return render_template('booking.html', carmap=carmap, page_data=page_data, sb=sb, p=p, username=username,**context)
 
-        cattype = request.form.get('type')
-        gearbox = request.form.get('gear')
+@app.route('/tables/', methods=['GET', 'POST'])
+@login_required
+def tables():
+    username = session['username']
 
-        car = Cars(location=location, Rdatetime=Rdatetime, Bdatetime=Bdatetime, cattype=cattype, gearbox=gearbox,
-                   Rday=Rday, Rtime=Rtime, Btime=Btime, Bday=Bday)
-        user_id = session.get('user_id')
-        user = User.query.filter(User.id == user_id).first()
-        car.author = user
-        db.session.add(car)
-        db.session.commit()
+    author_id = session['user_id']
 
-    return render_template('booking.html', sndmap=sndmap, page_data=page_data,  Lng_B=Lng_B,Lat_B=Lat_B, p=p, **context)
+    context = {
+        'Cars': Cars.query.filter_by(author_id=author_id)
+    }
 
-def Distance1(Lat_A,Lng_A,Lat_B,Lng_B): #第一种计算方法
-    ra=6378.140 #赤道半径
-    rb=6356.755 #极半径 （km）
-    flatten=(ra-rb)/ra  #地球偏率
-    rad_lat_A=radians(Lat_A)
-    rad_lng_A=radians(Lng_A)
-    rad_lat_B=radians(Lat_B)
-    rad_lng_B=radians(Lng_B)
-    pA=atan(rb/ra*tan(rad_lat_A))
-    pB=atan(rb/ra*tan(rad_lat_B))
-    xx=acos(sin(pA)*sin(pB)+cos(pA)*cos(pB)*cos(rad_lng_A-rad_lng_B))
-    c1=(sin(xx)-xx)*(sin(pA)+sin(pB))**2/cos(xx/2)**2
-    c2=(sin(xx)+xx)*(sin(pA)-sin(pB))**2/sin(xx/2)**2
-    dr=flatten/8*(c1-c2)
-    distance=ra*(xx+dr)
-    return distance
+    return render_template('tables.html',username=username,**context)
+
+
+def haversine(lon1, lat1, lon2, lat2):  # 经度1，纬度1，经度2，纬度2 （十进制度数）
+    """
+    Calculate the great circle distance between two points
+    on the earth (specified in decimal degrees)
+    """
+    # 将十进制度数转化为弧度
+    conter = 0
+    for x, y in zip(lon2, lat2):
+        conter += 1
+        # print(x[0], y[0], conter, lon1, lat1)
+        lon1_, lat1_, lon2, lat2 = map(radians, [lon1, lat1, x[0], y[0]])
+        # haversine公式
+        dlon = lon2 - lon1_
+        dlat = lat2 - lat1_
+        a = sin(dlat / 2) ** 2 + cos(lat1_) * cos(lat2) * sin(dlon / 2) ** 2
+        c = 2 * asin(sqrt(a))
+        r = 6371  # 地球平均半径，单位为公里
+        yield c * r
+
+
+@app.route('/api/cardatas')
+def fetch_cardata():
+    datas = CarsDataset.query.all()
+    return jsonify({'data': [d.serializer() for d in datas]})
+
 
 if __name__ == '__main__':
     app.run()
