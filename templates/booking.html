@@ -1,9 +1,14 @@
 {% extends 'base.html' %}
 {% import "_macros.html" as macros %}
 {% block head %}
+
+<!-- CSS link reference -->
     <link rel="stylesheet" href="{{ url_for('static',filename = 'css/indexcss.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static',filename = 'css/booking.css') }}">
+
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css"
           integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+		  
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
 
@@ -11,56 +16,7 @@
 
     <title>Marker Labels</title>
     {% import "_macros.html" as macros %}
-    <style>
-        .m1 {
-            position: absolute;
-            top: 70px;
-            right: 550px;
-        }
-
-        .titl {
-            position: absolute;
-            top: 50px;
-            right: 200px;
-        }
-
-        .gearbox {
-            position: absolute;
-            top: 100px;
-            right: 175px;
-        }
-
-        .brand1 {
-            position: absolute;
-            top: 100px;
-            right: 100px;
-        }
-
-        .brand2 {
-            position: absolute;
-            top: 150px;
-            right: 130px;
-        }
-
-        .brand3 {
-            position: absolute;
-            top: 210px;
-            right: 140px;
-        }
-
-        .brand4 {
-            position: absolute;
-            top: 250px;
-            right: 180px;
-        }
-    .si{
-         position: absolute;
-            top: 310px;
-            right: 30px;
-    }
-
-
-    </style>
+  
     {{ carmap.js }}
 {% endblock %}
 
@@ -278,9 +234,8 @@
     {#                                        Automatic Transmission#}
     {#                                    </option>#}
     {#                                </select>#}
-    <div class="titl">
-
-        <h3>
+    <div class="filterTitle">
+		<h3>
             Filter Results
         </h3>
     </div>
@@ -438,9 +393,12 @@
     </table>
     </div>
 
-    <script>$(document).ready( function () {
-    $('#1').DataTable();
-} );</script>
+    <script>
+	$(document).ready( function () 
+	{
+		$('#1').DataTable();
+	} );
+	</script>
 
 
 
