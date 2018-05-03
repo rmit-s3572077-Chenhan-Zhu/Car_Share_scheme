@@ -9,9 +9,6 @@
 
 {% endblock %}
 
-
-
-
 {% block main %}
 <form action="/booking/savecar"  method="post" >
 
@@ -198,13 +195,7 @@ The cars are located on Level 1, the cars are parked at the top of the entry ram
 
 <div class="shuoming5">Please use the parking pass to exit and enter the car park – DO NOT take a parking ticket from the ticket machine at the car park entrance. Doing so will make it impossible for the next member to leave the car park using the parking pass.</div>
 
-
-
-
 </form>
-
-
-
 
 <script>
 
@@ -214,14 +205,5 @@ $.getJSON('/api/cardatas',function(json){
 });
 
 </script>
-
-
-
-
-
-
-
-
-
 
 {% endblock %}
