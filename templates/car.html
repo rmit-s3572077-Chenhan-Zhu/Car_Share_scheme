@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 {% extends 'base.html' %}
 
 {% block title %}
@@ -10,7 +12,7 @@
 {% endblock %}
 
 {% block main %}
-<form action="/booking/savecar"  method="post" >
+<form action="/booking/savecar"  method="post">
 
     <input id="car_name" name="name" value="{{ name }}">
     <div class="background" style="position:absolute; top:50px;left:50px;"><img alt="Brand"
@@ -44,7 +46,7 @@
 
 
     <div class="button"><input type="submit" href="{{ url_for('bookingcar') }}" onclick="{if(confirm('Are you confirm to book')){this.document.formname.submit();return true;}return false;}"
-                               class="btn btn-warning" data-remodal-target="modal" value="BOOK NOW"></div>
+                               class="btn btn-warning" data-remodal-target="modal" value="BOOK NOW"/></div>
 
 
 {#<div class="button">#}
