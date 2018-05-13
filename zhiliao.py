@@ -9,6 +9,7 @@ from decoratars import login_required
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map
 from flask_admin import Admin, BaseView, expose
+import random
 # from flask_login import LoginManager,UserMixin
 
 from math import *
@@ -52,6 +53,24 @@ def index():
     username = session['username']
 
     return render_template('index.html', username=username)
+
+
+# @app.route('/testmap/')
+# @login_required
+# def testmap():
+#     locations = []
+#     for n in range(0,50):
+#         x=random.uniform(-37.803144,-37.803194)
+#         y=random.uniform(144.96557,144.96559)
+#         locations = [x,y]
+#     print locations
+#     map = Map(
+#         identifier="mymap",
+#         lat=locations[0].latitude,
+#         lng=locations[0].longitude,
+#         markers=[(loc.latitude, loc.longitude) for loc in locations]
+#     )
+#     return render_template('testmap.html', map=map)
 
 
 @app.route('/login/', methods=['GET', 'POST'])
@@ -178,12 +197,6 @@ def bookingsavecar():
         Rtime = request.form.get('Rtime')
         Rday = request.form.get('Rday')
 
-        #name = "test"
-        #brand = "tet"
-        #bluetooth = "teft"
-        #seat = "taet"
-        #vehicleType = "tqet"
-        #if 'name' in request.form:
         name = request.form['name']
             # brand = request.form['brand']
             # seat = request.form['seat']
@@ -200,7 +213,7 @@ def bookingsavecar():
         carinfo.author = user
         db.session.add(carinfo)
         db.session.commit()
-        return 'booking success !'
+        return redirect(url_for('booking'))
 
 
 # get values from map
@@ -213,47 +226,37 @@ def bookingcar():
         return redirect(url_for('booking'))
         #return render_template('car.html',name='tom')
     else:
-        #Rdatetime = request.form.get('Rdatetime')
-        #Bdatetime = request.form.get('Bdatetime')
-        #name = request.form['name']
-        #Rday = request.form.get('Rday')
-        #Rtime = request.form.get('Rtime')
-        #Btime = request.form.get('Btime')
-        #Bday = request.form.get('Bday')
-
-        #name = "test"
-        #brand = "tet"
-        #bluetooth = "teft"
-        #seat = "taet"
-        #vehicleType = "tqet"
-        #if 'name' in request.form:
-
-
-        # values from map
+     # values from map
         name = request.form['name']
+        price = request.form['price']
         brand = request.form['brand']
 
         seat = request.form['seat']
         bluetooth = request.form['bluetooth']
         vehicleType = request.form['vehicleType']
 
+        kilometer = request.form['kilometer']
+
+
         #return 'test'
 
 
-        return render_template('car.html', name=name, brand=brand, bluetooth=bluetooth, seat=seat,
-                               vehicleType=vehicleType, username=username)
-
-        #return render_template('car.html',name=name, brand=brand, bluetooth=bluetooth, seat=seat,
-                               #vehicleType=vehicleType,carinfo=carinfo,username=username)
+        return render_template('car.html', name=name, price=price, brand=brand, bluetooth=bluetooth, seat=seat,
+                               vehicleType=vehicleType, username=username,kilometer=kilometer)
 
 
-
-
+def rand(a,b):
+    return random.random()*(a-b)+b
 @app.route('/booking/', methods=['GET', 'POST'])
 @login_required
 def booking():
     username = session['username']
     page_data = CarsDataset.query
+    for p in page_data:
+        name = p.serializer()['name']
+        db.session.query(CarsDataset).filter(CarsDataset.name==name).update(
+            {'lat': rand(-37.817000,-37.778999), 'lng': rand(144.95000,144.99399)})
+    db.session.commit()
     # catdatas = CarsDataset.query.all()
     tid = request.args.get("tid", 0)
     if int(tid) != 0:
@@ -315,14 +318,16 @@ def booking():
     #      )
 
     boxcontent = "<form method='post' action='http://127.0.0.1:5000/booking/car/'><div>{0}<input type='hidden' name='name' value='{0}'/></div>"" \
-    ""<div>{1}<input type='hidden' name='brand' value='{1}'/></div> <div><input type='hidden' name='seat' value='{2}'/></div>" \
-    "<div><input type='hidden' name='bluetooth' value='{3}'/></div>" \
-    "<div><input type='hidden' name='vehicleType' value='{4}'/></div><button type='submit'class=btn btn-primary>booking</button></form>"
+    ""<div><input type='hidden' name='price' value='{1}'/><div>{2}<input type='hidden' name='brand' value='{2}'/></div> <div><input type='hidden' name='seat' value='{3}'/></div>" \
+    "<div><input type='hidden' name='bluetooth' value='{4}'/></div>" \
+    "<div><input type='hidden' name='vehicleType' value='{5}'/></div>" \
+                 "<div><input type='hidden' name='kilometer' value='{6}'/></div>" \
+                 "</div><button type='submit'class=btn btn-primary>booking</button></form>"
 
     carmap = Map(
         identifier="carmap",
         style="height:700px;width:800px;margin:0;",
-        zoom="16",
+        zoom="14",
         language="en",
         lat=locations[0]['lat'],
         lng=locations[0]['lng'],
@@ -331,10 +336,12 @@ def booking():
         seat=locations[0]['seat'],
         bluetooth=locations[0]['bluetooth'],
         vehicleType=locations[0]['vehicleType'],
+        kilometer=locations[0]['kilometer'],
+        price=locations[0]['price'],
 
         markers=[{"lat": loc['lat'], "lng": loc['lng'],
-                  "infobox": boxcontent.format(loc['name'].encode('utf-8'), loc['brand'].encode('utf-8'), loc['seat'],
-                                               loc['bluetooth'], loc['vehicleType'])} for loc in locations ]
+                  "infobox": boxcontent.format(loc['name'].encode('utf-8'), loc['price'], loc['brand'].encode('utf-8'), loc['seat'],
+                                               loc['bluetooth'], loc['vehicleType'],loc['kilometer'])} for loc in locations ]
     )
 
 
