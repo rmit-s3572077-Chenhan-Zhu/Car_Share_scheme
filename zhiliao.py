@@ -196,6 +196,7 @@ def bookingsavecar():
         Rdatetime = request.form.get('Rdatetime')
         Rtime = request.form.get('Rtime')
         Rday = request.form.get('Rday')
+        Location=request.form.get('location')
 
         name = request.form['name']
             # brand = request.form['brand']
@@ -206,7 +207,7 @@ def bookingsavecar():
         # return 'test'
 
         carinfo = Cars(Rdatetime=Rdatetime, Bdatetime=Bdatetime, carname=name,
-                       Rday=Rday, Rtime=Rtime, Btime=Btime, Bday=Bday)
+                       Rday=Rday, Rtime=Rtime, Btime=Btime, Bday=Bday,Location=Location)
 
         user_id = session.get('user_id')
         user = User.query.filter(User.id == user_id).first()
@@ -318,7 +319,7 @@ def booking():
     #      )
 
     boxcontent = "<form method='post' action='http://127.0.0.1:5000/booking/car/'><div>{0}<input type='hidden' name='name' value='{0}'/></div>"" \
-    ""<div><input type='hidden' name='price' value='{1}'/><div>{2}<input type='hidden' name='brand' value='{2}'/></div> <div><input type='hidden' name='seat' value='{3}'/></div>" \
+    ""<div>{1}$/Day<input type='hidden' name='price' value='{1}'/><div><input type='hidden' name='brand' value='{2}'/></div> <div><input type='hidden' name='seat' value='{3}'/></div>" \
     "<div><input type='hidden' name='bluetooth' value='{4}'/></div>" \
     "<div><input type='hidden' name='vehicleType' value='{5}'/></div>" \
                  "<div><input type='hidden' name='kilometer' value='{6}'/></div>" \
@@ -327,10 +328,14 @@ def booking():
     carmap = Map(
         identifier="carmap",
         style="height:700px;width:800px;margin:0;",
-        zoom="14",
+        zoom="15",
         language="en",
-        lat=locations[0]['lat'],
-        lng=locations[0]['lng'],
+
+        # lat=locations[0]['lat'],
+        lat =-37.80314407,
+        # lng=locations[0]['lng'],
+        lng=144.9655776,
+        icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
         name=locations[0]['name'],
         brand=locations[0]['brand'],
         seat=locations[0]['seat'],
@@ -341,8 +346,15 @@ def booking():
 
         markers=[{"lat": loc['lat'], "lng": loc['lng'],
                   "infobox": boxcontent.format(loc['name'].encode('utf-8'), loc['price'], loc['brand'].encode('utf-8'), loc['seat'],
-                                               loc['bluetooth'], loc['vehicleType'],loc['kilometer'])} for loc in locations ]
+                                               loc['bluetooth'], loc['vehicleType'],loc['kilometer'])} for loc in locations]
     )
+
+    # markers = [{"lat": loc['lat'], "lng": loc['lng'],
+    #             "infobox": boxcontent.format(loc['name'].encode('utf-8'), loc['price'], loc['brand'].encode('utf-8'),
+    #                                          loc['seat'],
+    #                                          loc['bluetooth'], loc['vehicleType'], loc['kilometer'])} for loc in
+    #            locations]
+    # )
 
 
     # if request.method == 'POST':
@@ -374,6 +386,12 @@ def tables():
     username = session['username']
 
     author_id = session['user_id']
+
+    # if request.method == 'POST':
+    #     obj = Cars.query.filter_by(id=12)
+    #     db.session.delete(obj)
+    #     db.session.commit()
+
 
     context = {
         'Cars': Cars.query.filter_by(author_id=author_id)
