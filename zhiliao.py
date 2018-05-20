@@ -1,5 +1,5 @@
 # encoding: utf-8
-from flask import Flask, render_template, request, redirect, url_for, session, flash, Blueprint, jsonify,abort
+from flask import Flask, render_template, request, redirect, url_for, session, flash, Blueprint, jsonify,abort,Response
 import config
 import requests
 from modules import User, Car_rental, CarsDataset,Cars
@@ -10,28 +10,24 @@ from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map
 from flask_admin import Admin, BaseView, expose
 import random
+from flask_admin import expose,Admin,AdminIndexView
+from flask_admin.contrib.sqla import ModelView
+from flask_basicauth import BasicAuth
+from flask_admin.contrib import sqla
+from werkzeug.exceptions import HTTPException
+
+
 # from flask_login import LoginManager,UserMixin
 
 from math import *
+
+
+
 
 ip = '128.250.51.47'
 url = 'http://freegeoip.net/json/' + ip
 r = requests.get(url)
 js = r.json()
-#
-# SAMPLE_RESPONSE = """{
-#     "ip":"108.46.131.77",
-#     "country_code":"US",
-#     "country_name":"United States",
-#     "region_code":"NY",
-#     "region_name":"New York",
-#     "city":"Brooklyn",
-#     "zip_code":"11249",
-#     "time_zone":"America/New_York",
-#     "latitude":40.645,
-#     "longitude":-73.945,
-#     "metro_code":501
-# }"""
 
 
 app = Flask(__name__)
@@ -39,12 +35,47 @@ app.config.from_object(config)
 db.init_app(app)
 app.secret_key = os.urandom(24)
 GoogleMaps(app)
+admin = Admin(app, name='WIN Admin', template_mode='bootstrap3')
 
-
-flask_admin = Admin()
-flask_admin.init_app(app)
 EARTH_REDIUS = 6378.137
 
+from modules import User, Cars,CarsDataset
+
+
+
+
+
+
+# app.config['BASIC_AUTH_USERNAME'] = 'admin'
+# app.config['BASIC_AUTH_PASSWORD'] = '135790'
+basic_auth = BasicAuth(app)
+
+
+# class AuthException(HTTPException):
+#     def __init__(self, message):
+#         # python 2
+#         super(AuthException, self).__init__(message, Response(
+#             message, 401,
+#             {'WWW-Authenticate': 'Basic realm="Login Required"'}
+#         ))
+#
+#
+#
+# # overwrite ModelView of flask_admin to just affects admin page
+#
+# class ModelView(sqla.ModelView):
+#     def is_accessible(self):
+#         if not basic_auth.authenticate():
+#             raise AuthException('Not authenticated. Refresh the page.')
+#         else:
+#             return True
+#
+#     def inaccessible_callback(self, name, **kwargs):
+#         return redirect(basic_auth.challenge())
+
+admin.add_view(ModelView(User, db.session))
+admin.add_view(ModelView(Cars, db.session))
+admin.add_view(ModelView(CarsDataset, db.session))
 
 @app.route('/')
 @login_required
@@ -55,22 +86,6 @@ def index():
     return render_template('index.html', username=username)
 
 
-# @app.route('/testmap/')
-# @login_required
-# def testmap():
-#     locations = []
-#     for n in range(0,50):
-#         x=random.uniform(-37.803144,-37.803194)
-#         y=random.uniform(144.96557,144.96559)
-#         locations = [x,y]
-#     print locations
-#     map = Map(
-#         identifier="mymap",
-#         lat=locations[0].latitude,
-#         lng=locations[0].longitude,
-#         markers=[(loc.latitude, loc.longitude) for loc in locations]
-#     )
-#     return render_template('testmap.html', map=map)
 
 
 @app.route('/login/', methods=['GET', 'POST'])
@@ -79,7 +94,7 @@ def login():
         return render_template('login.html')
     else:
         if request.form.get('register'):
-            return render_template('register.html')
+            return redirect(url_for('register'))
 
         username = request.form.get('username')
         password = request.form.get('password')
@@ -90,7 +105,8 @@ def login():
             session['username'] = user.username
             session.permanent = True
             return redirect('/')
-        else:
+        else :
+
             return u'wrong username or password,please try again '
 
 
@@ -105,6 +121,7 @@ def register():
 
         if password1 != password2:
             return u'different passwords,please try again!'
+
         else:
             user = User(username=username, password=password1)
             db.session.add(user)
@@ -124,15 +141,6 @@ def car_rental():
             name = request.form['name']
             brand = request.form['brand']
         return render_template('car_rental.html', name=name, brand=brand)
-        # title = request.form.get('title')
-        # content = request.form.get('content')
-        # car_rental = Car_rental(title=title, content=content)
-        # user_id = session.get('user_id')
-        # user = User.query.filter(User.id == user_id).first()
-        # car_rental.author = user
-        # db.session.add(car_rental)
-        # db.session.commit()
-        # return redirect(url_for('index'))
 
 
 @app.route('/logout/')
@@ -318,7 +326,7 @@ def booking():
     #         }]
     #      )
 
-    boxcontent = "<form method='post' action='http://127.0.0.1:5000/booking/car/'><div>{0}<input type='hidden' name='name' value='{0}'/></div>"" \
+    boxcontent = "<form method='post' action='http://13.236.142.174/booking/car/'><div>{0}<input type='hidden' name='name' value='{0}'/></div>"" \
     ""<div>{1}$/Day<input type='hidden' name='price' value='{1}'/><div><input type='hidden' name='brand' value='{2}'/></div> <div><input type='hidden' name='seat' value='{3}'/></div>" \
     "<div><input type='hidden' name='bluetooth' value='{4}'/></div>" \
     "<div><input type='hidden' name='vehicleType' value='{5}'/></div>" \
@@ -331,9 +339,8 @@ def booking():
         zoom="15",
         language="en",
 
-        # lat=locations[0]['lat'],
         lat =-37.80314407,
-        # lng=locations[0]['lng'],
+
         lng=144.9655776,
         icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
         name=locations[0]['name'],
@@ -420,7 +427,7 @@ def haversine(lon1, lat1, lon2, lat2):  # 经度1，纬度1，经度2，纬度2 
         yield c * r
 
 
-@app.route('/api/cardatas')
+@app.route('/api/cardatas',methods=[ 'GET'])
 def fetch_cardata():
     datas = CarsDataset.query.all()
     return jsonify({'data': [d.serializer() for d in datas]})
