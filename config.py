@@ -15,3 +15,6 @@ DB_URI="mysql+mysqldb://{}:{}@{}:{}/{}?charset=utf8".format(user,password,host,p
 SQLALCHEMY_DATABASE_URI=DB_URI
 
 SQLALCHEMY_TRACK_MODIFICATIONS=False
+
+
+
