@@ -13,9 +13,9 @@ class Testmain(unittest.TestCase):
     def tearDown(self):
         pass
 
-    # ensure that flask was set up correctly, the reason of returning 302 is redirect(if no login).
-    def test_index_status_code(self):
-        result = self.app.get('/')
+#Return 302 means redirect to main index if logout successful
+    def test_logout(self):
+        result = self.app.get('/logout/')
         self.assertEqual(result.status_code, 302)
 
 

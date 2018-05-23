@@ -12,11 +12,22 @@ class Testmain(unittest.TestCase):
 
     def tearDown(self):
         pass
+    def test_incorrct_return(self):
+        result=self.app.post()
 
-    # ensure that flask was set up correctly, the reason of returning 302 is redirect(if no login).
-    def test_index_status_code(self):
-        result = self.app.get('/')
-        self.assertEqual(result.status_code, 302)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
