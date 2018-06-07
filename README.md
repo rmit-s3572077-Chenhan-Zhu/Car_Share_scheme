@@ -1,9 +1,9 @@
 # Car_Share_scheme
 
 <h3>Project Brief</h3>
-We are required to develop a web/mobile application for a company running a car share scheme. The company owns a number of cars which can be parked at a number of locations in the city. Users of the scheme will book a car for some period of time, use it and then return it to an empty location (the return location could be different than the book location). The system needs to provide the necessary transactions and data management/storage capabilities to support this kind of business. </br>
-
-● </br>Register users</br>
+We are required to develop a web/mobile application for a company running a car share scheme. The company owns a number of cars which can be parked at a number of locations in the city. Users of the scheme will book a car for some period of time, use it and then return it to an empty location (the return location could be different than the book location). The system needs to provide the necessary transactions and data management/storage capabilities to support this kind of business. 
+</br>
+● Register users</br>
 ● Keep all car data and rental information</br> 
 ● Provide a way for a user to book (and return) a car for a particular time and location</br> 
 ● Have an option to find the nearest available car based on the user’s location</br> 
