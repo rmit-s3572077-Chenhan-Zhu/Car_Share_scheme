@@ -1,3 +1,6 @@
+ /* Author: Hong Wu */ 
+ /* Author: Chenhan Zhu */ 
+    
 #encoding: utf-8
 
 from exits import db
