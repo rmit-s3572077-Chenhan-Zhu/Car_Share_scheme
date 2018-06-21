@@ -1,3 +1,5 @@
+ /* Author: Jinming Liu */ 
+        
 import unittest
 from zhiliao import login, app
 import zhiliao
