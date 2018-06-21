@@ -1,4 +1,4 @@
- /*Hong Wu*/ 
+ /* Author: Hong Wu */ 
 
 import unittest
 import time
